@@ -1,0 +1,57 @@
+REPO_DIR=$(git rev-parse --show-toplevel)
+
+export _DAGS_ENV="${REPO_DIR}/.environment"
+
+BIN_DIR="${REPO_DIR}/bin"
+export _BIN_DIR=${BIN_DIR}
+TMP_DIR="${REPO_DIR}/tmp"
+export _TMP_DIR=${TMP_DIR}
+
+DIRENV_VERSION='2.35.0'
+DIRENV_DL_URL="https://github.com/direnv/direnv/releases/download/v${DIRENV_VERSION}/direnv.linux-amd64"
+DIRENV_BIN="${BIN_DIR}/direnv"
+
+YQ_VERSION='4.44.5'
+YQ_DL_URL="https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64"
+YQ_BIN="${BIN_DIR}/yq"
+
+TASK_VERSION='3.40.0'
+TASK_DL_URL="https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_amd64.tar.gz"
+TASK_TMP_DIR="${REPO_DIR}/tmp/task"
+TASK_DL_TGZ="${TASK_TMP_DIR}/task.tar.gz"
+TASK_TMP_BIN="${TASK_TMP_DIR}/task"
+TASK_BIN="${BIN_DIR}/task"
+export _TASKS_DIR="${REPO_DIR}/tasks"
+
+XH_VERSION='0.23.0'
+XH_DL_URL="https://github.com/ducaale/xh/releases/download/v${XH_VERSION}/xh-v${XH_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+XH_TMP_DIR="${REPO_DIR}/tmp/xh"
+XH_DL_TGZ="${XH_TMP_DIR}/xh.tar.gz"
+XH_TMP_BIN="${XH_TMP_DIR}/xh"
+XH_BIN="${BIN_DIR}/xh"
+
+DAGU_VERSION='1.14.8'
+DAGU_DL_URL="https://github.com/dagu-dev/dagu/releases/download/v${DAGU_VERSION}/dagu_${DAGU_VERSION}_linux_amd64.tar.gz"
+DAGU_TMP_DIR="${REPO_DIR}/tmp/dagu"
+DAGU_DL_DIR="${DAGU_TMP_DIR}/dl"
+DAGU_DL_BIN="${DAGU_DL_DIR}/dagu"
+DAGU_DL_TGZ="${DAGU_DL_BIN}.tar.tgz"
+DAGU_BIN="${BIN_DIR}/dagu"
+DAGU_HTTP_HOST='127.0.0.1'
+DAGU_HTTP_PORT='8080'
+DAGU_CMD="${DAGU_BIN} server"
+
+export DAGU_LOG_DIR="${DAGU_TMP_DIR}/logs"
+export DAGU_ADMIN_LOG_DIR=${DAGU_LOG_DIR}
+export DAGU_DATA_DIR="${DAGU_TMP_DIR}/data"
+export _DAGS_DIR="${REPO_DIR}/dags"
+export DAGU_DAGS=${_DAGS_DIR}
+export _DAGS_CFG="${REPO_DIR}/dags.yaml"
+export DAGU_BASE_CONFIG=${_DAGS_CFG}
+export DAGU_HOST=${DAGU_HTTP_HOST}
+export DAGU_PORT=${DAGU_HTTP_PORT}
+export _WORK_DIR="${DAGU_TMP_DIR}/work_dir"
+export DAGU_WORK_DIR=${_WORK_DIR}
+export DAGU_NAVBAR_TITLE="GCP"
+
+export PATH=${BIN_DIR}:${PATH}

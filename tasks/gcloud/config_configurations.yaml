@@ -1,0 +1,66 @@
+version: "3"
+
+vars:
+  GCLOUD_CONFIG_CONFIGURATIONS_CMD: "gcloud config configurations"
+
+tasks:
+  default:
+    cmds:
+      - echo '{{.GCLOUD_CONFIG_CONFIGURATIONS_CMD}} ...'
+
+  exec_*:
+    internal: true
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - CONFIGURATION_NAME
+    vars:
+      _ACTION: "{{index .MATCH 0}}"
+    cmds:
+      - >-
+        {{.GCLOUD_CONFIG_CONFIGURATIONS_CMD}}
+        {{._ACTION}} {{.CONFIGURATION_NAME}}
+
+  describe:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - CONFIGURATION_NAME
+    cmds:
+      - task: exec_describe
+        vars:
+          CONFIGURATION_NAME:
+            ref: .CONFIGURATION_NAME
+
+  create:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - CONFIGURATION_NAME
+    cmds:
+      - task: exec_create
+        vars:
+          CONFIGURATION_NAME:
+            ref: .CONFIGURATION_NAME
+
+  activate:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - CONFIGURATION_NAME
+    cmds:
+      - task: exec_activate
+        vars:
+          CONFIGURATION_NAME:
+            ref: .CONFIGURATION_NAME
+
+  delete:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - CONFIGURATION_NAME
+    cmds:
+      - task: exec_delete
+        vars:
+          CONFIGURATION_NAME:
+            ref: .CONFIGURATION_NAME

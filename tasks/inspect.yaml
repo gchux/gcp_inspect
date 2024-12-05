@@ -1,0 +1,71 @@
+version: "3"
+
+includes:
+  gcloud_config:
+    taskfile: "./gcloud/config.yaml"
+  gcloud_config_configurations:
+    taskfile: "./gcloud/config_configurations.yaml"
+
+tasks:
+  delete_configuration:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+        - USER_ACCOUNT
+        - AUTHORIZATION_TOKEN
+    vars:
+      _CONFIGURATION_NAME: "inspect-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
+      _AUTHORIZATION_TOKEN_FILE: "{{.USER_WORKING_DIR}}/token-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
+    cmds:
+      - task: gcloud_config_configurations:activate
+        vars:
+          CONFIGURATION_NAME: "default"
+      - task: gcloud_config_configurations:delete
+        vars:
+          CONFIGURATION_NAME:
+            ref: ._CONFIGURATION_NAME
+      - rm -vf {{._AUTHORIZATION_TOKEN_FILE}}
+
+  activate_configuration:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+        - USER_ACCOUNT
+        - AUTHORIZATION_TOKEN
+    vars:
+      _CONFIGURATION_NAME: "inspect-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
+      _AUTHORIZATION_TOKEN_FILE: "{{.USER_WORKING_DIR}}/token-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
+    cmds:
+      - echo '{{.AUTHORIZATION_TOKEN}}' > {{._AUTHORIZATION_TOKEN_FILE}}
+      - task: gcloud_config_configurations:create
+        vars:
+          CONFIGURATION_NAME:
+            ref: ._CONFIGURATION_NAME
+      - task: gcloud_config_configurations:activate
+        vars:
+          CONFIGURATION_NAME:
+            ref: ._CONFIGURATION_NAME
+      - task: gcloud_config:set_project
+        vars:
+          PROPERTY_NAME: "auth/authorization_token_file"
+          GCP_PROJECT_ID:
+            ref: .GCP_PROJECT_ID
+      - task: gcloud_config:set_property
+        vars:
+          PROPERTY_NAME: "billing/quota_project"
+          PROPERTY_VALUE: "LEGACY"
+      - task: gcloud_config:set_account
+        vars:
+          USER_ACCOUNT:
+            ref: .USER_ACCOUNT
+      - task: gcloud_config:set_property
+        vars:
+          PROPERTY_NAME: "auth/authorization_token_file"
+          PROPERTY_VALUE:
+            ref: ._AUTHORIZATION_TOKEN_FILE
+      - task: gcloud_config_configurations:describe
+        vars:
+          CONFIGURATION_NAME:
+            ref: ._CONFIGURATION_NAME

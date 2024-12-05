@@ -1,0 +1,45 @@
+version: "3"
+
+vars:
+  GCLOUD_CONFIG_CMD: "gcloud config"
+
+tasks:
+  default:
+    cmds:
+      - echo '{{.GCLOUD_CONFIG_CMD}} ...'
+
+  set_property:
+    requires:
+      vars:
+        - PROPERTY_NAME
+        - PROPERTY_VALUE
+    cmds:
+      - >-
+        {{.GCLOUD_CONFIG_CMD}}
+        set
+        {{.PROPERTY_NAME}}
+        {{.PROPERTY_VALUE}}
+
+  set_project:
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - task: set_property
+        vars:
+          PROPERTY_NAME: "project"
+          PROPERTY_VALUE:
+            ref: .GCP_PROJECT_ID
+
+  set_account:
+    requires:
+      vars:
+        - USER_ACCOUNT
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - task: set_property
+        vars:
+          PROPERTY_NAME: "account"
+          PROPERTY_VALUE:
+            ref: .USER_ACCOUNT

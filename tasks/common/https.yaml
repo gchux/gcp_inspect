@@ -1,0 +1,54 @@
+version: '3'
+
+tasks:
+
+  exec:
+    internal: true
+    requires:
+      vars: [METHOD, ENDPOINT, QUERY, HEADERS]
+    vars:
+      OUTPUT: '{{.OUTPUT | default "-"}}'
+    cmds:
+      - >-
+        xh --https --ignore-stdin
+        {{if .BEARER}}-A bearer -a
+        {{if eq .BEARER "google:access_token"}}`gcloud auth print-access-token`
+        {{else if eq .BEARER "google:identity_token"}}`gcloud auth print-identity-token`
+        {{else}}''{{.BEARER}}''{{end}}{{end}}
+        --pretty=format {{if eq .OUTPUT "-"}}--verbose{{else}}--body{{end}}
+        {{.METHOD}} {{.ENDPOINT}} {{.QUERY}} {{.HEADERS}}
+        {{if .BODY}}{{if hasPrefix "@" .BODY}}{{.BODY}}{{end}}{{else}}--raw='{{.BODY}}'{{end}}
+        {{if eq .OUTPUT "-"}}> /dev/stdout{{else}}| tee {{.OUTPUT}}{{end}}
+
+  exec_*:
+    requires:
+      vars: [ENDPOINT, QUERY, HEADERS]
+    vars:
+      METHOD: '{{index .MATCH 0}}'
+    cmds:
+      - task: exec
+        vars:
+          METHOD: '{{.METHOD | trim | upper}}'
+          ENDPOINT: '{{.ENDPOINT | trim}}'
+          QUERY: '{{.QUERY}}'
+          HEADERS: '{{.HEADERS}}'
+          BODY: '{{.BODY}}'
+          BEARER: '{{.BEARER | default ""}}'
+          OUTPUT: '{{.OUTPUT}}'
+
+  request:
+    requires:
+      vars: [ENDPOINT, QUERY, HEADERS]
+    vars:
+      METHOD: '{{splitList " " .ENDPOINT | first | trim | lower}}'
+      ENDPOINT: '{{.ENDPOINT | replace .METHOD "" | trim}}'
+    cmds:
+      - task: exec_{{.METHOD}}
+        vars:
+          METHOD: '{{.METHOD}}'
+          ENDPOINT: '{{.ENDPOINT}}'
+          QUERY: '{{.QUERY}}'
+          HEADERS: '{{.HEADERS}}'
+          BODY: '{{.BODY}}'
+          BEARER: '{{.BEARER}}'
+          OUTPUT: '{{.OUTPUT}}'

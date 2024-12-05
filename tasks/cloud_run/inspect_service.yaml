@@ -1,0 +1,54 @@
+version: "3"
+
+includes:
+  inspect:
+    taskfile: "../inspect.yaml"
+  gcloud_run_services:
+    taskfile: "../gcloud/run_services.yaml"
+
+tasks:
+  delete_configuration:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+    cmds:
+      - task: inspect:delete_configuration
+        vars:
+          GCP_PROJECT_ID:
+            ref: .GCP_PROJECT_ID
+
+  activate_configuration:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+        - USER_ACCOUNT
+        - AUTHORIZATION_TOKEN
+    cmds:
+      - task: inspect:activate_configuration
+        vars:
+          GCP_PROJECT_ID:
+            ref: .GCP_PROJECT_ID
+          USER_ACCOUNT:
+            ref: .USER_ACCOUNT
+          AUTHORIZATION_TOKEN:
+            ref: .AUTHORIZATION_TOKEN
+
+  describe_service:
+    dir: "{{.USER_WORKING_DIR}}"
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+        - CLOUD_RUN_SERVICE
+        - CLOUD_RUN_REGION
+    cmds:
+      - task: gcloud_run_services:describe
+        vars:
+          GCP_PROJECT:
+            ref: .GCP_PROJECT_ID
+          RUN_SERVICE:
+            ref: .CLOUD_RUN_SERVICE
+          RUN_REGION:
+            ref: .CLOUD_RUN_REGION
+          FORMAT: "json"

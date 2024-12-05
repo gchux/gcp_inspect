@@ -1,0 +1,5 @@
+local-only/
+local_only/
+bin/
+tmp/
+work_dir/
