@@ -4,15 +4,15 @@ description: https://cloud.google.com/sdk/gcloud/reference/run/services/describe
 env:
   - _NAMESPACE: cloud_run
   - _TARGET: inspect
-  - _DAG_NAME: ${_NAMESPACE}__${_TARGET}_service
+  - _DAG_NAME: ${_NAMESPACE}__${_TARGET}_revision
   - _DAG_WORK_DIR: ${_WORK_DIR}/${_DAG_NAME}
   - _TASK_FILE: ${_TASKS_DIR}/${_NAMESPACE}/${_TARGET}.yaml
 params: >-
   GCP_PROJECT_ID=<gcp_project>
-  USER_ACCOUNT=<user_account>
+  USER_ACCOUNT=${_USER_ACCOUNT}
   AUTHORIZATION_TOKEN=<authorization_token>
   CLOUD_RUN_REGION=<cloud_run_region>
-  CLOUD_RUN_SERVICE=<cloud_run_service>
+  CLOUD_RUN_REVISION=<cloud_run_service>
 steps:
   - name: create_task_executor
     run: create_task_executor
@@ -29,14 +29,14 @@ steps:
       AUTHORIZATION_TOKEN=${AUTHORIZATION_TOKEN}"
     depends:
       - create_task_executor
-  - name: describe_services
+  - name: describe_revisions
     dir: ${_DAG_WORK_DIR}
     command: >-
       run ${_DAG_NAME}
       describe_service
       "GCP_PROJECT_ID=${GCP_PROJECT_ID}
       CLOUD_RUN_REGION=${CLOUD_RUN_REGION}
-      CLOUD_RUN_SERVICE=${CLOUD_RUN_SERVICE}"
+      CLOUD_RUN_REVISION=${CLOUD_RUN_REVISION}"
     depends:
       - activate_configuration
   - name: delete_configuration
@@ -47,4 +47,4 @@ steps:
       "GCP_PROJECT_ID=${GCP_PROJECT_ID}
       CONFIGURATION_NAME=${_DEFAULT_GCLOUD_CONFIG}"
     depends:
-      - describe_services
+      - describe_revisions

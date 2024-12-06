@@ -25,7 +25,8 @@ tasks:
     dir: "{{.USER_WORKING_DIR}}"
     cmds:
       - >-
-        {{.GCLOUD_RUN_SVCS_CMD}} describe
+        {{.GCLOUD_RUN_SVCS_CMD}}
+        describe
         {{.RUN_SERVICE}}
         --region={{.RUN_REGION}}
         --project={{.GCP_PROJECT}}

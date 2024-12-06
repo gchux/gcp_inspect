@@ -1,0 +1,29 @@
+version: "3"
+
+vars:
+  GCLOUD_RUN_REVS_CMD: "gcloud run revisions"
+
+tasks:
+  default:
+    cmds:
+      - echo '{{.GCLOUD_RUN_REVS_CMD}} ...'
+
+  describe:
+    requires:
+      vars:
+        - GCP_PROJECT_ID
+        - RUN_REGION
+        - RUN_REVISION
+    vars:
+      _FORMAT: '{{.FORMAT | default "json"}}'
+      _OUTPUT: '{{.OUTPUT | default "/dev/stdout"}}'
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - >-
+        {{.GCLOUD_RUN_REVS_CMD}}
+        describe
+        {{.RUN_REVISION}}
+        --region={{.RUN_REGION}}
+        --project={{.GCP_PROJECT_ID}}
+        --format={{._FORMAT}}
+        > {{._OUTPUT}}

@@ -5,6 +5,8 @@ includes:
     taskfile: "../inspect.yaml"
   gcloud_run_services:
     taskfile: "../gcloud/run_services.yaml"
+  gcloud_run_revisions:
+    taskfile: "../gcloud/run_revisions.yaml"
 
 tasks:
   delete_configuration:
@@ -35,20 +37,28 @@ tasks:
           AUTHORIZATION_TOKEN:
             ref: .AUTHORIZATION_TOKEN
 
-  describe_service:
+  describe_*:
     dir: "{{.USER_WORKING_DIR}}"
     requires:
       vars:
         - GCP_PROJECT_ID
-        - CLOUD_RUN_SERVICE
-        - CLOUD_RUN_REGION
+        - CLOUD_RUN_ASSET_NAMES
+        - CLOUD_RUN_SERVICES
+    vars:
+      _RUN_ASSET_TYPE: "{{index .MATCH 0}}"
     cmds:
-      - task: gcloud_run_services:describe
+      - for:
+          var: CLOUD_RUN_ASSET_NAMES
+          split: ","
+          as: CLOUD_RUN_ASSET_NAME
+        task: gcloud_run_{{._RUN_ASSET_TYPE}}:describe
         vars:
           GCP_PROJECT:
             ref: .GCP_PROJECT_ID
           RUN_SERVICE:
-            ref: .CLOUD_RUN_SERVICE
+            ref: .CLOUD_RUN_ASSET_NAME
+          RUN_REVISION:
+            ref: .CLOUD_RUN_ASSET_NAME
           RUN_REGION:
             ref: .CLOUD_RUN_REGION
           FORMAT: "json"

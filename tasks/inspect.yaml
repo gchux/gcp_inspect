@@ -12,15 +12,15 @@ tasks:
     requires:
       vars:
         - GCP_PROJECT_ID
-        - USER_ACCOUNT
-        - AUTHORIZATION_TOKEN
     vars:
       _CONFIGURATION_NAME: "inspect-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
       _AUTHORIZATION_TOKEN_FILE: "{{.USER_WORKING_DIR}}/token-{{.GCP_PROJECT_ID}}-{{.TASK_UUID}}"
+      _SWITCH_TO_CONFIGURATION: '{{.CONFIGURATION_NAME | default "default"}}'
     cmds:
       - task: gcloud_config_configurations:activate
         vars:
-          CONFIGURATION_NAME: "default"
+          CONFIGURATION_NAME:
+            ref: ._SWITCH_TO_CONFIGURATION
       - task: gcloud_config_configurations:delete
         vars:
           CONFIGURATION_NAME:
