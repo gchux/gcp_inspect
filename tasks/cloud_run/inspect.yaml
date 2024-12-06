@@ -42,8 +42,8 @@ tasks:
     requires:
       vars:
         - GCP_PROJECT_ID
+        - CLOUD_RUN_REGION
         - CLOUD_RUN_ASSET_NAMES
-        - CLOUD_RUN_SERVICES
     vars:
       _RUN_ASSET_TYPE: "{{index .MATCH 0}}"
     cmds:
