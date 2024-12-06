@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 gcloud projects list --limit=1 --quiet &>/dev/null
-export _USER_ACCOUNT=`gcloud config get core/account --quiet 2>/dev/null | tr -d '\n'`
+export _DEFAULT_USER_ACCOUNT=`gcloud config get core/account --quiet 2>/dev/null | tr -d '\n'`
 export _DEFAULT_GCLOUD_CONFIG=`gcloud config configurations list --format=json | jq -crM '.[] | select(.is_active) | .name' | tr -d '\n'`
+
+echo "> Default user account is: ${_DEFAULT_USER_ACCOUNT}"
+echo "> Default Cloud SDK config is: ${_DEFAULT_GCLOUD_CONFIG}"
 
 set -x
 

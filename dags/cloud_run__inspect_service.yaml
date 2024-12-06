@@ -12,7 +12,7 @@ params: >-
   USER_ACCOUNT=<user_account>
   AUTHORIZATION_TOKEN=<authorization_token>
   CLOUD_RUN_REGION=<cloud_run_region>
-  CLOUD_RUN_SERVICE=<cloud_run_service>
+  CLOUD_RUN_SERVICES=<cloud_run_services>
 steps:
   - name: create_task_executor
     run: create_task_executor
@@ -33,10 +33,10 @@ steps:
     dir: ${_DAG_WORK_DIR}
     command: >-
       run ${_DAG_NAME}
-      describe_service
+      describe_services
       "GCP_PROJECT_ID=${GCP_PROJECT_ID}
       CLOUD_RUN_REGION=${CLOUD_RUN_REGION}
-      CLOUD_RUN_SERVICE=${CLOUD_RUN_SERVICE}"
+      CLOUD_RUN_ASSET_NAMES=${CLOUD_RUN_SERVICES}"
     depends:
       - activate_configuration
   - name: delete_configuration

@@ -1,6 +1,6 @@
 group: cloud_run
 tags: serverless,cloud_run
-description: https://cloud.google.com/sdk/gcloud/reference/run/services/describe
+description: https://cloud.google.com/sdk/gcloud/reference/run/revisions/describe
 env:
   - _NAMESPACE: cloud_run
   - _TARGET: inspect
@@ -9,10 +9,10 @@ env:
   - _TASK_FILE: ${_TASKS_DIR}/${_NAMESPACE}/${_TARGET}.yaml
 params: >-
   GCP_PROJECT_ID=<gcp_project>
-  USER_ACCOUNT=${_USER_ACCOUNT}
+  USER_ACCOUNT=<user_account>
   AUTHORIZATION_TOKEN=<authorization_token>
   CLOUD_RUN_REGION=<cloud_run_region>
-  CLOUD_RUN_REVISION=<cloud_run_service>
+  CLOUD_RUN_REVISIONS=<cloud_run_revisions>
 steps:
   - name: create_task_executor
     run: create_task_executor
@@ -33,10 +33,10 @@ steps:
     dir: ${_DAG_WORK_DIR}
     command: >-
       run ${_DAG_NAME}
-      describe_service
+      describe_revisions
       "GCP_PROJECT_ID=${GCP_PROJECT_ID}
       CLOUD_RUN_REGION=${CLOUD_RUN_REGION}
-      CLOUD_RUN_REVISION=${CLOUD_RUN_REVISION}"
+      CLOUD_RUN_ASSET_NAMES=${CLOUD_RUN_REVISIONS}"
     depends:
       - activate_configuration
   - name: delete_configuration
