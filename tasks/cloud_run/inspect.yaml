@@ -55,10 +55,8 @@ tasks:
         vars:
           GCP_PROJECT:
             ref: .GCP_PROJECT_ID
-          RUN_SERVICE:
-            ref: .CLOUD_RUN_ASSET_NAME
-          RUN_REVISION:
-            ref: .CLOUD_RUN_ASSET_NAME
           RUN_REGION:
             ref: .CLOUD_RUN_REGION
           FORMAT: "json"
+          RUN_SERVICE: "{{.CLOUD_RUN_ASSET_NAME}}"
+          RUN_REVISION: "{{.CLOUD_RUN_ASSET_NAME}}"
